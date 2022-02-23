@@ -1,0 +1,243 @@
+<aura:component controller="ManDaysInputService"
+  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,lightning:actionOverride,lightning:isUrlAddressable" access="global">
+
+                <aura:attribute name="options" type="List" access="PRIVATE"/>
+                <aura:attribute name="selectedValue" type="String" access="PRIVATE"/>
+                <aura:attribute name="obj" type="Object" access="PRIVATE"/>
+                <aura:attribute name="itemsList" type="List" access="PRIVATE"/>
+                <aura:attribute name="projectList" type="List" access="PRIVATE"/>
+                <aura:attribute name="projectSelectedList" type="List" access="PRIVATE"/>
+                <aura:attribute name="queryKeyStr" type="String" access="PRIVATE"/>
+                <aura:attribute name="queryResultList" type="List" access="PRIVATE"/>
+                <aura:attribute name="querySelectedList" type="List" access="PRIVATE"/>
+                <aura:attribute name="downList" type="List" access="PRIVATE"/>
+                <aura:attribute name="speicalProjectList" type="List" access="PRIVATE"/>
+                
+                <aura:attribute name="index1" type="String" access="PRIVATE"/>
+                <aura:attribute name="index2" type="String" access="PRIVATE"/>
+
+                <aura:attribute name="isModalOpen" type="boolean" default="false"/>
+                <aura:attribute name="isModal2Open" type="boolean" default="false"/>
+
+                <aura:attribute name="querySelectedAccList" type="List" access="PRIVATE"/>
+                <aura:attribute name="queryAccKeyStr" type="String" access="PRIVATE"/>
+                <aura:attribute name="queryResultAccList" type="List" access="PRIVATE"/>
+                <aura:attribute name="selectedAcc" type="String" access="PRIVATE"/>
+                
+                <aura:handler name="init" value="{!this}" action="{!c.init}" />
+                
+
+    <lightning:card >
+        <div align="center">
+            <lightning:button variant="brand" label="《" title="前一页"  onclick="{! c.handlePrevious  }"/>
+        <lightning:icon iconName="standard:event" alternativeText="Event" size="x-small" title="Event" />  {!v.obj.Name}
+            <lightning:button variant="brand" label="》" title="后一页"  onclick="{! c.handleNext }"/>
+        </div>
+        <div align="center">
+        <lightning:button variant="success" label="添加项目" title="添加项目" onclick="{! c.handleopenModel }"/>
+        <lightning:button variant="brand" label="保存" title="保存" />
+        </div>
+        <aura:iteration items="{!v.itemsList}" var="item">
+            <div style="font-size: medium;font-weight: 600;">日期：{!item.date}</div>
+
+            <table id="">
+                <thead>
+                    <tr style= "background-color: rgb(235, 232, 232); height:30px">
+                        <th style= "width:30% "><div style= "margin-left: 40px; ">项目名称</div></th>
+                        <th style= "width:20%"><div>客户名称</div></th>
+                        <th style= "width:20%"><div>工时（单位：天）</div></th>
+                        <th style= "width:30%"><div>操作</div></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <aura:iteration items="{!item.project}" var="item1">
+                        <tr style="border-top: solid 1px rgb(235, 232, 232);">
+                            <td style= "width:30% "><div style= "margin-left: 40px; ">{!item1.projectName__r.Name}</div></td>
+                            <td style= "width:20%"><div>
+                                <aura:if isTrue="{!item1.customer__c == undined}">
+                                    
+                                    <div  style= "color:darkgray; " onclick="{! c.handleopenModel2 }"><u>点击选择客户</u> </div>
+                                    
+                                    <aura:set attribute="else">
+                                        {!item1.customer__c == undined ? undined : item1.customer__r.Name }
+                                    </aura:set>
+                                  </aura:if> </div>
+                                </td>
+                            <td style= "width:20%;height:5px"><div style="width: max-content;margin-top: -16px;">
+                                <lightning:select variant="brand" name="colorId" aura:id="colorId" value="{!item1.customer__r.Name}">
+                                    <aura:iteration items="{!v.options}" var="option">
+                                        <option text="{!option.label}" value="{!item1.customer__r.Name}" selected="{!option.selected}"/>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </div></td>
+                            <td style= "width:30%"><div><lightning:button variant="brand" label="移除" title="移除" name = "{!item.index}"  value = "{!item1.index}"  onclick="{! c.handleDel }"/></div></td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </aura:iteration>
+
+
+
+        <div>
+
+            <!--Use aura:if tag to display/hide popup based on isModalOpen value-->  
+            <aura:if isTrue="{!v.isModalOpen}">
+                 
+                <!-- Modal/Popup Box starts here-->
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <lightning:input  value = "{!v.queryKeyStr}" type="text" name="reason" placeholder="请输入项目名称关键字" />
+                            <lightning:button variant="brand"
+                            label="搜索"
+                            title="搜索"
+                            onclick="{!c.handleQuery}"/><br/>
+                
+                                <table id="">
+                                    <thead>
+                                        <tr>
+                                            <th><div><input type="checkbox" class="checkbox" value="" name="checkbox" /></div></th>
+                                            <th><div>项目名称</div></th>
+                                            <th><div>项目经理</div></th>
+                                            <th><div>项目状态</div></th>
+                                            <th><div>项目开始日期</div></th>
+                                            <th><div>项目结束日期</div></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                    
+                                        <aura:iteration items="{!v.queryResultList}" var="item1">
+                                            <tr >
+                                                <td><div><ui:inputCheckbox aura:id="checkbox" name ="{!item1.Id}"  change="{!c.onCheck}"/></div></td>
+                                                <td><div>{!item1.Name}</div></td>
+                                                <td><div>{!item1.projectManager__r.name}</div></td>
+                                                <td><div>{!item1.projectStatus__c}</div></td>
+                                                <td><div>{!item1.projectStart__c}</div></td>
+                                                <td><div>{!item1.projectStop__c}</div></td>
+                                                
+                                            </tr>
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+
+                                <lightning:button variant="brand"
+                                    label="添加"
+                                    title="添加"
+                                    onclick="{!c.handleAdd}"/><br/>
+
+
+                                    <table id="">
+                                        <thead>
+                                            <tr>
+                                                <th><div><input type="checkbox" class="checkbox" value="" name="checkbox" /></div></th>
+                                                <th><div>项目名称</div></th>
+                                                <th><div>项目经理</div></th>
+                                                <th><div>项目状态</div></th>
+                                                <th><div>项目开始日期</div></th>
+                                                <th><div>项目结束日期</div></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                        
+                                            <aura:iteration items="{!v.downList}" var="item2">
+                                                <tr >
+                                                    <td><div><input type="checkbox" class="checkbox" value="" name="checkbox" /></div></td>
+                                                    <td><div>{!item2.Name}</div></td>
+                                                    <td><div>{!item2.rojectManager__r.name}</div></td>
+                                                    <td><div>{!item2.projectStatus__c}</div></td>
+                                                    <td><div>{!item2.projectStart__c}</div></td>
+                                                    <td><div>{!item2.projectStop__c}</div></td>
+                                                    
+                                                </tr>
+                                            </aura:iteration>
+                                        </tbody>
+                                    </table>
+                          
+                        </div>
+                        <!--Modal/Popup Box Footer Starts here-->
+                        <footer class="slds-modal__footer">
+                            <lightning:button variant="brand"
+                                                label="确认"
+                                                title="确认"
+                                                onclick="{!c.handlesubmit}"/>
+                            <lightning:button variant="brand"
+                                              label="返回"
+                                              title="返回"
+                                              onclick="{! c.handlecloseModel }"/>
+                            <lightning:button variant="brand"
+                                              label="移除"
+                                              title="移除"
+                                              onclick="{! c.handlecloseModel }"/>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </aura:if>
+        </div>
+
+
+
+
+        
+        <div>
+            <aura:if isTrue="{!v.isModal2Open}">
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <lightning:input  value = "{!v.queryAccKeyStr}" type="text" name="reason" placeholder="请输入客户名称关键字" />
+                            <lightning:button variant="brand"
+                            label="搜索"
+                            title="搜索"
+                            onclick="{!c.handleQuery2}"/><br/>
+                                <table id="">
+                                    <thead>
+                                        <tr>
+                                            <th><div></div></th>
+                                            <th><div>客户名称</div></th>
+                                            <th><div>客户所有人</div></th>
+                                            <th><div>客户分级</div></th>
+                                            <th><div>客户状态</div></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                    
+                                        <aura:iteration items="{!v.queryResultAccList}" var="item1">
+                                            <tr >
+                                                <td><div><ui:inputRadio aura:id="r0" name="others" text="{!item1.Id}" label="" change="{!c.onGroup}"/></div></td>
+                                                <td><div>{!item1.Name}</div></td>
+                                                <td><div>{!item1.Owner.Name}</div></td>
+                                                <td><div>{!item1.Rating}</div></td>
+                                                <td><div>{!item1.Rating}</div></td>
+                                                
+                                            </tr>
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning:button variant="brand"
+                                                label="添加"
+                                                title="添加"
+                                                onclick="{!c.handlesubmit2}"/>
+                            <lightning:button variant="brand"
+                                              label="返回"
+                                              title="返回"
+                                              onclick="{! c.handlecloseModel2 }"/>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </aura:if>
+        </div>
+    </lightning:card>
+
+
+        
+
+
+  
+
+</aura:component>
