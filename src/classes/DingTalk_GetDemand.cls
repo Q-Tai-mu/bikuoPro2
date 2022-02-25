@@ -45,9 +45,9 @@ global with sharing class DingTalk_GetDemand {
     }
     global class RestDemandInfo {
         public String demandTheme { get; set; }
-        public String numberOfExperts { get; set; }
-        public String demandForContent { get; set; }
         public String projectNumber { get; set; }
+        public String demandForContent { get; set; }
+        public String numberOfExperts { get; set; }
         public String recordId { get; set; }
 
     }

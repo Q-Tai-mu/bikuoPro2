@@ -119,7 +119,7 @@ global with sharing class DingTalk_GetExpertsProjectList {
         return expertsProjects;
     }
     global class RestExpertsProjectInfo {
-        public String recordNumber { get; set; }//项目专家编号
+        public String recordNumber { get; set; }//项目编号
         public String interviewStatus { get; set; }//访谈状态
         public String searchCriteria { get; set; }//搜索条件
         public String searchContent { get; set; }//搜索内容

@@ -128,7 +128,7 @@ global with sharing class DingTalk_ExpertInterviewReport {
     }
 
     global class RestExpertInterviewInfo {
-        public String recordNumber { get; set; }
+        public String recordNumber { get; set; }//项目专家编号
     }
     global class RespExpertInterviewInfo {
         public Integer code;

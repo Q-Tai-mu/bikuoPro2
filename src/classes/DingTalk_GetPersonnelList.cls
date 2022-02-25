@@ -3,7 +3,7 @@
  */
 /**
 *@ClassName:Lin-Tui
-*@Description:TODO 分配人员
+*@Description:TODO 分配人员 (获得成员列表)
 *@Authortko18
 *@Date 2022/2/18 14:12
 *@Version:1.0.0
@@ -47,6 +47,7 @@ global with sharing class DingTalk_GetPersonnelList {
         if (!staffList.isEmpty()) {
             for (staff__c staff : staffList) {
                 PersonnelStaff personnelStaff = new PersonnelStaff();
+                personnelStaff.personnelId = staff.Id;
                 personnelStaff.personnelName = staff.Name;
                 PersonnelStaffList.add(personnelStaff);
             }
@@ -71,6 +72,7 @@ global with sharing class DingTalk_GetPersonnelList {
     }
     global class PersonnelStaff {
         public String personnelName { get; set; }
+        public String personnelId { get; set; }
     }
 
 }
